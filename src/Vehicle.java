@@ -10,6 +10,7 @@ public class Vehicle {
 	
 	private SimpleCruise simpleCruise;
 	private FollowingDistanceManagement followingDistanceManagement;
+	private AutomaticEmergencyBrake aeb;
 	
 	public int speed = 0;
 	protected Vehicle(int y, String m)
@@ -25,6 +26,7 @@ public class Vehicle {
 		
 		simpleCruise = new SimpleCruise();
 		followingDistanceManagement = new FollowingDistanceManagement();
+		aeb = new AutomaticEmergencyBrake();
 	}
 	
 	protected void setSpeed(double input)

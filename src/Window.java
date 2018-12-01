@@ -19,6 +19,9 @@ public class Window {
 	
 	private Label trailingDistanceDisplay;
 
+	private Vehicle vehicle;
+	
+	
 	/**
 	 * Launch the application.
 	 * @param args
@@ -36,6 +39,9 @@ public class Window {
 	 * Open the window.
 	 */
 	public void open() {
+		vehicle = new Vehicle(2018, "focus");
+		
+		
 		display = Display.getDefault(); //Display
 		createContents();
 		shell.open();
@@ -46,7 +52,6 @@ public class Window {
 			}
 		}
 		
-		speed = 0;
 	}
 
 	/**
@@ -75,7 +80,7 @@ public class Window {
 		speedLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		speedLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 		speedLabel.setBounds(389, 150, 128, 25);
-		speedLabel.setText("Speed: ");
+		speedLabel.setText("Speed: 0");
 		
 		Button cruiseSuspend = new Button(shell, SWT.NONE);
 		cruiseSuspend.addSelectionListener(new SelectionAdapter() {
@@ -103,7 +108,8 @@ public class Window {
 		brakeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				decrementSpeed();
+				vehicle.decrementSpeed();
+				updateDisplay();
 			}
 		});
 		brakeButton.setBounds(403, 795, 43, 25);
@@ -114,7 +120,8 @@ public class Window {
 		gasPedal.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				incrementSpeed();
+				vehicle.incrementSpeed();
+				updateDisplay();
 			}
 		});
 		gasPedal.setBounds(485, 784, 32, 47);
@@ -159,19 +166,8 @@ public class Window {
 
 	}
 	
-	
-	private void incrementSpeed()
+	private void updateDisplay()
 	{
-		speed++;
-		speedLabel.setText("Speed: " + speed);
-	}
-	
-	private void decrementSpeed()
-	{
-		if(speed > 0)
-		{
-			speed--;
-		}
-		speedLabel.setText("Speed: " + speed);
+		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 	}
 }

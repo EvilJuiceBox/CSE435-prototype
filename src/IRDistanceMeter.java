@@ -1,3 +1,5 @@
+
+
 /**
  * This class interacts with the infrared distance hardware to measure distance between this vehicle and next
  * For purposes, we assume hardware updates every fixed interval

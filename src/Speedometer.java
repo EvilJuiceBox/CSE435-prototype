@@ -13,7 +13,7 @@ public class Speedometer extends SensorComponent{
 	}
 	
 	/*
-	 * this method is for prototype only. Real version will not allow you to set speed
+	 * this method is for prototype only. Real version will not allow you to set speed 
 	 */
 	protected void setSpeed(double input) {
 		this.speed = input;

@@ -136,14 +136,15 @@ public class Window {
 		trailingDistanceDisplay = new Label(shell, SWT.NONE);
 		trailingDistanceDisplay.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		trailingDistanceDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		trailingDistanceDisplay.setBounds(373, 223, 119, 31);
+		trailingDistanceDisplay.setBounds(408, 223, 84, 31);
 		trailingDistanceDisplay.setText("Off");
 		
 		Button btnTrailingDistance = new Button(shell, SWT.NONE);
 		btnTrailingDistance.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				trailingDistanceDisplay.setText("Trailing Distance: 1");
+				vehicle.increaseDistance();
+				updateDisplay();
 			}
 		});
 		btnTrailingDistance.setBounds(580, 544, 130, 50);
@@ -153,7 +154,8 @@ public class Window {
 		reduceTrailing.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				trailingDistanceDisplay.setText("Trailing distnace subtracted!");
+				vehicle.decreaseDistance();
+				updateDisplay();
 			}
 		});
 		reduceTrailing.setBounds(553, 642, 130, 50);
@@ -163,7 +165,7 @@ public class Window {
 		cruise.setText("Cruise Off");
 		cruise.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		cruise.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		cruise.setBounds(373, 260, 147, 45);
+		cruise.setBounds(373, 272, 147, 45);
 		
 		Label lblTrailingDistance = new Label(shell, SWT.NONE);
 		lblTrailingDistance.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -189,5 +191,6 @@ public class Window {
 	{
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 		cruise.setText(vehicle.getCruiseInfo());
+		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
 	}
 }

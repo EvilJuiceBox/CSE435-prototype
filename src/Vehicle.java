@@ -9,7 +9,7 @@ public class Vehicle {
 	private Dashboard dashboard;
 	
 	private SimpleCruise simpleCruise;
-	
+	private FollowingDistanceManagement followingDistanceManagement;
 	
 	public int speed = 0;
 	protected Vehicle(int y, String m)
@@ -24,6 +24,7 @@ public class Vehicle {
 		
 		
 		simpleCruise = new SimpleCruise();
+		followingDistanceManagement = new FollowingDistanceManagement();
 	}
 	
 	protected void setSpeed(double input)
@@ -76,11 +77,13 @@ public class Vehicle {
 	protected void cruiseDisable()
 	{
 		simpleCruise.cruiseDisable();
+		followingDistanceManagement.reset();
 	}
 	
 	protected void cruiseSuspend()
 	{
 		simpleCruise.cruiseSuspend();
+		followingDistanceManagement.reset();
 	}
 	
 	protected void cruiseResume()
@@ -99,5 +102,30 @@ public class Vehicle {
 		}
 		
 		return "Cruise Off";
+	}
+	
+	protected boolean isCruiseActive()
+	{
+		return (simpleCruise.getStatus() == "On") ? true : false;
+	}
+	
+	
+	///////////////////////           Function for FollowingDistanceManagement          /////////////////////
+	protected void increaseDistance()
+	{
+		if(isCruiseActive())
+		{
+			followingDistanceManagement.increment();
+		}
+	}
+	
+	protected void decreaseDistance()
+	{
+		followingDistanceManagement.decrement();
+	}
+	
+	protected String getDistanceInfo()
+	{
+		return (followingDistanceManagement.getDistance() == 0) ? "Off" : "" + followingDistanceManagement.getDistance();
 	}
 }

@@ -12,6 +12,13 @@ public class Speedometer extends SensorComponent{
 		speed = 0;
 	}
 	
+	/*
+	 * this method is for prototype only. Real version will not allow you to set speed
+	 */
+	protected void setSpeed(double input) {
+		this.speed = input;
+	}
+	
 	protected void increment()
 	{
 		if(speed < MAX)

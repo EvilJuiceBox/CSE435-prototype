@@ -70,37 +70,43 @@ public class Window {
 		cruiseActive.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				cruise.setText("CRUISE");
+				vehicle.cruiseActive();
+				updateDisplay();
 			}
 		});
-		cruiseActive.setBounds(180, 491, 100, 40);
+		cruiseActive.setBounds(180, 491, 140, 40);
 		cruiseActive.setText("Cruise On");
-		
-		speedLabel = new Label(shell, SWT.NONE);
-		speedLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		speedLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		speedLabel.setBounds(389, 150, 128, 25);
-		speedLabel.setText("Speed: 0");
-		
+	
 		Button cruiseSuspend = new Button(shell, SWT.NONE);
 		cruiseSuspend.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				cruise.setText("");
+				vehicle.cruiseSuspend();
+				updateDisplay();
 			}
 		});
-		cruiseSuspend.setBounds(215, 581, 100, 40);
+		cruiseSuspend.setBounds(201, 583, 140, 40);
 		cruiseSuspend.setText("Cruise Suspend");
 		
 		Button cruiseOff = new Button(shell, SWT.NONE);
 		cruiseOff.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				cruise.setText("Cruise Cleared");
+				vehicle.cruiseDisable();
+				updateDisplay();
 			}
 		});
-		cruiseOff.setBounds(260, 663, 100, 40);
+		cruiseOff.setBounds(251, 673, 140, 40);
 		cruiseOff.setText("Cruise Off");
+		
+		
+		////////////           Speed label          /////////////
+		speedLabel = new Label(shell, SWT.NONE);
+		speedLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		speedLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+		speedLabel.setBounds(373, 152, 130, 34);
+		speedLabel.setText("Speed: 0");
+		
 		
 		Button brakeButton = new Button(shell, SWT.NONE);
 		final Image brakeImg = new Image(display, SWTResourceManager.getImage(Window.class, "/resources/brake.png").getImageData().scaledTo(40, 20));
@@ -130,7 +136,7 @@ public class Window {
 		trailingDistanceDisplay = new Label(shell, SWT.NONE);
 		trailingDistanceDisplay.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		trailingDistanceDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		trailingDistanceDisplay.setBounds(389, 223, 119, 31);
+		trailingDistanceDisplay.setBounds(373, 223, 119, 31);
 		trailingDistanceDisplay.setText("Off");
 		
 		Button btnTrailingDistance = new Button(shell, SWT.NONE);
@@ -154,20 +160,34 @@ public class Window {
 		reduceTrailing.setText("Trailing Distance -");
 		
 		cruise = new Label(shell, SWT.NONE);
+		cruise.setText("Cruise Off");
 		cruise.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		cruise.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		cruise.setBounds(389, 260, 100, 40);
+		cruise.setBounds(373, 260, 147, 45);
 		
 		Label lblTrailingDistance = new Label(shell, SWT.NONE);
 		lblTrailingDistance.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblTrailingDistance.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		lblTrailingDistance.setBounds(389, 192, 119, 25);
+		lblTrailingDistance.setBounds(373, 192, 119, 25);
 		lblTrailingDistance.setText("Trailing Distance:");
+		
+		Button setSpeed25 = new Button(shell, SWT.NONE);
+		setSpeed25.setBounds(97, 784, 155, 66);
+		setSpeed25.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				vehicle.setSpeed(25);
+				updateDisplay();
+			}
+		});
+		setSpeed25.setText("SetSpeedTo25");
 
 	}
 	
 	private void updateDisplay()
 	{
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
+		cruise.setText(vehicle.getCruiseInfo());
 	}
 }

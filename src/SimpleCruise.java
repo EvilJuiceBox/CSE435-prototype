@@ -1,7 +1,7 @@
 
 public class SimpleCruise extends Module {
 	private double speed; //the speed of the vehicle to maintain
-	private boolean status; //false = off, true = on
+	private String status; //false = off, true = on
 	
 	protected SimpleCruise()
 	{
@@ -11,7 +11,17 @@ public class SimpleCruise extends Module {
 	protected void setSpeed(int input)
 	{
 		this.speed = input;
-		this.status = false;
+		this.status = "Disabled";
+	}
+	
+	protected double getCruiseSpeed()
+	{
+		return this.speed;
+	}
+	
+	protected String getStatus()
+	{
+		return this.status;
 	}
 	
 	protected void maintainSpeed()
@@ -25,7 +35,7 @@ public class SimpleCruise extends Module {
 	protected void cruiseDisable()
 	{
 		speed = 0;
-		status = false;
+		status = "Disabled";
 	}
 	
 	/***
@@ -38,7 +48,7 @@ public class SimpleCruise extends Module {
 		if(currentSpeed >= 25)
 		{
 			this.speed = currentSpeed;
-			this.status = true;
+			this.status = "On";
 			return true;
 		} else {
 			return false;
@@ -50,7 +60,10 @@ public class SimpleCruise extends Module {
 	 */
 	protected void cruiseSuspend()
 	{
-		this.status = false;
+		if(this.status == "On")
+		{
+			this.status = "Suspended";
+		}
 	}
 	
 	/**
@@ -58,6 +71,6 @@ public class SimpleCruise extends Module {
 	 */
 	protected void cruiseResume()
 	{
-		this.status = true;
+		this.status = "On";
 	}
 }

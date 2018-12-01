@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public class Window {
 
-	protected Shell shell;
+	protected Shell shlSccPrototypev;
 	private Label cruise;
 	private int speed;
 	private Label speedLabel;
@@ -20,6 +20,14 @@ public class Window {
 	private Label trailingDistanceDisplay;
 
 	private Vehicle vehicle;
+	
+	private ImageData fdm0;
+	private ImageData fdm1;
+	private ImageData fdm2;
+	private ImageData fdm3;
+	private ImageData fdm4;
+	
+	private Label fdmImg;
 	
 	
 	/**
@@ -40,13 +48,17 @@ public class Window {
 	 */
 	public void open() {
 		vehicle = new Vehicle(2018, "focus");
-		
+		fdm0 =  SWTResourceManager.getImage(Window.class, "/resources/fdm0.png").getImageData();
+		fdm1 =  SWTResourceManager.getImage(Window.class, "/resources/fdm1.png").getImageData();
+		fdm2 =  SWTResourceManager.getImage(Window.class, "/resources/fdm2.png").getImageData();
+		fdm3 =  SWTResourceManager.getImage(Window.class, "/resources/fdm3.png").getImageData();
+		fdm4 =  SWTResourceManager.getImage(Window.class, "/resources/fdm4.png").getImageData();
 		
 		display = Display.getDefault(); //Display
 		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
+		shlSccPrototypev.open();
+		shlSccPrototypev.layout();
+		while (!shlSccPrototypev.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -59,14 +71,14 @@ public class Window {
 	 * @wbp.parser.entryPoint
 	 */
 	protected void createContents() {
-		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN );
-		shell.setText("SCC2 PrototypeV1");
+		shlSccPrototypev = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN );
+		shlSccPrototypev.setText("SCC2 PrototypeV2");
 		
 		ImageData backgroundImgData = SWTResourceManager.getImage(Window.class, "/resources/background.png").getImageData();
-		shell.setSize(backgroundImgData.width, backgroundImgData.height);
-		shell.setBackgroundImage(new Image(display, SWTResourceManager.getImage(Window.class, "/resources/background.png").getImageData()));
+		shlSccPrototypev.setSize(backgroundImgData.width, backgroundImgData.height);
+		shlSccPrototypev.setBackgroundImage(new Image(display, SWTResourceManager.getImage(Window.class, "/resources/background.png").getImageData()));
 		
-		Button cruiseActive = new Button(shell, SWT.NONE);
+		Button cruiseActive = new Button(shlSccPrototypev, SWT.NONE);
 		cruiseActive.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -77,7 +89,7 @@ public class Window {
 		cruiseActive.setBounds(180, 491, 140, 40);
 		cruiseActive.setText("Cruise On");
 	
-		Button cruiseSuspend = new Button(shell, SWT.NONE);
+		Button cruiseSuspend = new Button(shlSccPrototypev, SWT.NONE);
 		cruiseSuspend.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -88,7 +100,7 @@ public class Window {
 		cruiseSuspend.setBounds(201, 583, 140, 40);
 		cruiseSuspend.setText("Cruise Suspend");
 		
-		Button cruiseOff = new Button(shell, SWT.NONE);
+		Button cruiseOff = new Button(shlSccPrototypev, SWT.NONE);
 		cruiseOff.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -101,14 +113,14 @@ public class Window {
 		
 		
 		////////////           Speed label          /////////////
-		speedLabel = new Label(shell, SWT.NONE);
+		speedLabel = new Label(shlSccPrototypev, SWT.NONE);
 		speedLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		speedLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 		speedLabel.setBounds(373, 152, 130, 34);
 		speedLabel.setText("Speed: 0");
 		
 		
-		Button brakeButton = new Button(shell, SWT.NONE);
+		Button brakeButton = new Button(shlSccPrototypev, SWT.NONE);
 		final Image brakeImg = new Image(display, SWTResourceManager.getImage(Window.class, "/resources/brake.png").getImageData().scaledTo(40, 20));
 		brakeButton.setImage(brakeImg);
 		brakeButton.addSelectionListener(new SelectionAdapter() {
@@ -120,7 +132,7 @@ public class Window {
 		});
 		brakeButton.setBounds(403, 795, 43, 25);
 		
-		Button gasPedal = new Button(shell, SWT.NONE);
+		Button gasPedal = new Button(shlSccPrototypev, SWT.NONE);
 		final Image temp = new Image(display, SWTResourceManager.getImage(Window.class, "/resources/gas_pedal.png").getImageData().scaledTo(20, 40));
 		gasPedal.setImage(temp);
 		gasPedal.addSelectionListener(new SelectionAdapter() {
@@ -133,13 +145,13 @@ public class Window {
 		gasPedal.setBounds(485, 784, 32, 47);
 		//btnGas.setImage(new ImageIcon(this.getClass().getResource("./gas_pedal.png")).getImage());
 		
-		trailingDistanceDisplay = new Label(shell, SWT.NONE);
+		trailingDistanceDisplay = new Label(shlSccPrototypev, SWT.NONE);
 		trailingDistanceDisplay.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		trailingDistanceDisplay.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 		trailingDistanceDisplay.setBounds(408, 223, 84, 31);
 		trailingDistanceDisplay.setText("Off");
 		
-		Button btnTrailingDistance = new Button(shell, SWT.NONE);
+		Button btnTrailingDistance = new Button(shlSccPrototypev, SWT.NONE);
 		btnTrailingDistance.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -150,7 +162,7 @@ public class Window {
 		btnTrailingDistance.setBounds(580, 544, 130, 50);
 		btnTrailingDistance.setText("Trailing Distance +");
 		
-		Button reduceTrailing = new Button(shell, SWT.NONE);
+		Button reduceTrailing = new Button(shlSccPrototypev, SWT.NONE);
 		reduceTrailing.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -161,19 +173,19 @@ public class Window {
 		reduceTrailing.setBounds(553, 642, 130, 50);
 		reduceTrailing.setText("Trailing Distance -");
 		
-		cruise = new Label(shell, SWT.NONE);
+		cruise = new Label(shlSccPrototypev, SWT.NONE);
 		cruise.setText("Cruise Off");
 		cruise.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		cruise.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 		cruise.setBounds(373, 272, 147, 45);
 		
-		Label lblTrailingDistance = new Label(shell, SWT.NONE);
+		Label lblTrailingDistance = new Label(shlSccPrototypev, SWT.NONE);
 		lblTrailingDistance.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblTrailingDistance.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 		lblTrailingDistance.setBounds(373, 192, 119, 25);
 		lblTrailingDistance.setText("Trailing Distance:");
 		
-		Button setSpeed25 = new Button(shell, SWT.NONE);
+		Button setSpeed25 = new Button(shlSccPrototypev, SWT.NONE);
 		setSpeed25.setBounds(97, 784, 155, 66);
 		setSpeed25.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -184,7 +196,15 @@ public class Window {
 			}
 		});
 		setSpeed25.setText("SetSpeedTo25");
-
+		
+		Label lblScc = new Label(shlSccPrototypev, SWT.NONE);
+		lblScc.setBounds(10, 10, 119, 99);
+		lblScc.setText("SCC2 \nKira Chan \nIan Murray \nPrudhvi Kuchipudi \nBrandon Brooks \nZebin Liang");
+		
+		fdmImg = new Label(shlSccPrototypev, SWT.NONE);
+		fdmImg.setLocation(680, 58);
+		fdmImg.setSize(fdm0.width, fdm0.height);
+		fdmImg.setBackgroundImage(new Image(display, fdm0));
 	}
 	
 	private void updateDisplay()
@@ -192,5 +212,26 @@ public class Window {
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 		cruise.setText(vehicle.getCruiseInfo());
 		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
+		
+		switch(vehicle.getDistance())
+		{
+		case 0 : 
+			fdmImg.setBackgroundImage(new Image(display, fdm0));
+			break;
+		case 1 : 
+			fdmImg.setBackgroundImage(new Image(display, fdm1));
+			break;
+		case 2 : 
+			fdmImg.setBackgroundImage(new Image(display, fdm2));
+			break;
+		case 3 : 
+			fdmImg.setBackgroundImage(new Image(display, fdm3));
+			break;
+		case 4 : 
+			fdmImg.setBackgroundImage(new Image(display, fdm4));
+			break;
+		default:
+			fdmImg.setBackgroundImage(new Image(display, fdm0));
+		}
 	}
 }

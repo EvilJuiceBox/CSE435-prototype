@@ -128,4 +128,9 @@ public class Vehicle {
 	{
 		return (followingDistanceManagement.getDistance() == 0) ? "Off" : "" + followingDistanceManagement.getDistance();
 	}
+	
+	protected int getDistance()
+	{
+		return followingDistanceManagement.getDistance();
+	}
 }

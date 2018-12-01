@@ -38,4 +38,9 @@ public class Button extends IOComponent{
 	{
 		return this.latched;
 	}
+	
+	protected String getName()
+	{
+		return this.name;
+	}
 }

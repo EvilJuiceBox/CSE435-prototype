@@ -377,6 +377,7 @@ public class Window {
 		{
 			brakesPressed = false;
 			gasPressed = false;
+			vehicle.cruiseDisable();
 			alarm.setSize(alarmData.width, alarmData.height);
 			
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance

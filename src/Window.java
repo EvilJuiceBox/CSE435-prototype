@@ -1,7 +1,3 @@
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -41,12 +37,14 @@ public class Window {
 	private Label black_tick2;
 	private Label black_tick3;
 	private Label black_tick4;
+	private Label blueCarSpeed;
 	
 	private BlueCar bCar;
 	private Label myCar;
 	
 	private Text txtEnterBlueCar;
 	private Label distanceBetweenCars;
+	private Button resetBlue;
 	
 	/**
 	 * Launch the application.
@@ -267,19 +265,24 @@ public class Window {
 		blueCar.setSize(blueCarData.width, blueCarData.height);
 		blueCar.setImage(new Image(display, blueCarData));
 		
-		Label lblBlueCarSpeed = new Label(shlSccPrototypev, SWT.NONE);
-		lblBlueCarSpeed.setBounds(751, 22, 140, 25);
-		lblBlueCarSpeed.setText("Blue car speed:");
+		blueCarSpeed = new Label(shlSccPrototypev, SWT.NONE);
+		blueCarSpeed.setBounds(751, 22, 140, 25);
+		blueCarSpeed.setText("Blue speed:");
 		
 		Button setBlueSpeedButton = new Button(shlSccPrototypev, SWT.NONE);
 		setBlueSpeedButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				int tempInput = Integer.parseInt(txtEnterBlueCar.getText());
-				if(tempInput >= 0 && tempInput <= 150)
-				{
-					bCar.setSpeed(tempInput);
+				try {
+					int tempInput = Integer.parseInt(txtEnterBlueCar.getText());
+					if(tempInput >= 0 && tempInput <= 150)
+					{
+						bCar.setSpeed(tempInput);
+					}
+				} catch (Exception exception) {
+					exception.printStackTrace();
 				}
+				
 			}
 		});
 		setBlueSpeedButton.setBounds(844, 51, 47, 25);
@@ -292,6 +295,19 @@ public class Window {
 		distanceBetweenCars = new Label(shlSccPrototypev, SWT.NONE);
 		distanceBetweenCars.setBounds(751, 123, 119, 25);
 		distanceBetweenCars.setText("Distance:");
+		
+		resetBlue = new Button(shlSccPrototypev, SWT.NONE);
+		resetBlue.setBounds(751, 80, 141, 29);
+		resetBlue.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				bCar.setSpeed(vehicle.getSpeed());
+				bCar.resetLocation();
+				
+			}
+		});
+		resetBlue.setText("Reset Blue");
 		
 		bCar = new BlueCar(blueCar.getLocation().y);
 		
@@ -314,6 +330,7 @@ public class Window {
 	{
 		updateDisplay();
 		
+		blueCarSpeed.setText("Blue speed: " + (int) bCar.getSpeed());
 		bCar.update(vehicle.getSpeed());
 		blueCar.setLocation(blueCar.getLocation().x, bCar.getLocation());
 		
@@ -389,22 +406,33 @@ public class Window {
 	{
 		private double speed;
 		private int location;
+		private int origin;
 		
 		protected BlueCar(int myLocation)
 		{
 			this.speed = 0;
 			this.location = myLocation;
+			this.origin = myLocation;
+		}
+		
+		protected void resetLocation()
+		{
+			this.location = this.origin;
 		}
 		
 		protected int getLocation()
 		{
-			System.out.println(this.location);
 			return this.location;
 		}
 		
-		protected void setSpeed(int input)
+		protected void setSpeed(double input)
 		{
 			this.speed = input;
+		}
+		
+		protected double getSpeed()
+		{
+			return this.speed;
 		}
 		
 		protected void update(double relativeSpeed)

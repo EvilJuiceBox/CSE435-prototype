@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class Window {
 	private static final int FDM_THRESHOLD = 125;
+	private static final int DECELERATE_THRESHOLD = 50;
 	protected Shell shlSccPrototypev;
 	private Label cruise;
 	private Label speedLabel;
@@ -301,6 +302,7 @@ public class Window {
 			public void widgetSelected(SelectionEvent e)
 			{
 				syncSpeedGate = true;
+				bCar.setSpeed(vehicle.getSpeed());
 				bCar.resetLocation();
 				
 			}
@@ -373,29 +375,26 @@ public class Window {
 		
 		if(res != -1) //5frame time to stop, AEB active
 		{
-			
-			//System.out.println("AEB ON");
-			
 			brakesPressed = false;
 			gasPressed = false;
 			alarm.setSize(alarmData.width, alarmData.height);
 			
-			int cnt = (int) (res);
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
 		} else if (vehicle.isCruiseActive()) { //cruise controls
-			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance();
-			int distanceToMin = Math.abs(distanceDifference - minDistanceBetweenVehicles); //limit
-			int reduceFactor;
-			try {
-				reduceFactor = velocityDifference / distanceToMin;
-			} catch (Exception e) {
-				// TODO: handle exception
-				reduceFactor = 0;
-			}
+			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance(); //desired spacing between vehicles
+			int stopDistance = DECELERATE_THRESHOLD + minDistanceBetweenVehicles;
 			
-			if(vehicle.isFDMActive() && distanceDifference <= minDistanceBetweenVehicles) //fdm active, reduce distance
+			
+			if(vehicle.isFDMActive() && distanceDifference - stopDistance <= DECELERATE_THRESHOLD) //fdm active, reduce distance
 			{
-				vehicle.reduceSpeed(velocityDifference * Math.max(reduceFactor, 1));
+				int timeToImpact;
+				try {
+					timeToImpact = DECELERATE_THRESHOLD/velocityDifference; //time until we get to the next vehicle
+				} catch (Exception e)
+				{
+					timeToImpact = -1;
+				}
+				vehicle.reduceSpeed((int) Math.ceil((double) velocityDifference / (double) Math.max(timeToImpact, 1))); //relativeSpeed reduced by coefficient of distance
 			} else if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
 			{
 				if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
@@ -411,7 +410,6 @@ public class Window {
 			}
 		} else { //regular car inputs
 			//System.out.println("reg input");
-			
 			alarm.setSize(0,0);
 			if(brakesPressed)
 			{
@@ -426,7 +424,7 @@ public class Window {
 		
 		if(syncSpeedGate)
 		{
-			bCar.speed = vehicle.getSpeed();
+			bCar.setSpeed(vehicle.getSpeed());
 		}
 		String result = (syncSpeedGate) ? "Sync Speed: On": "Sync Speed: Off";
 		syncSpeed.setText(result);

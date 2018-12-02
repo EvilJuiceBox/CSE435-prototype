@@ -1,3 +1,7 @@
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -27,8 +31,14 @@ public class Window {
 	private ImageData fdm3;
 	private ImageData fdm4;
 	
-	private Label fdmImg;
+	private ImageData blackTick;
 	
+	private Label fdmImg;
+	private Label black_tick;
+	private Label black_tick1;
+	private Label black_tick2;
+	private Label black_tick3;
+	private Label black_tick4;
 	
 	/**
 	 * Launch the application.
@@ -159,7 +169,7 @@ public class Window {
 				updateDisplay();
 			}
 		});
-		btnTrailingDistance.setBounds(580, 544, 130, 50);
+		btnTrailingDistance.setBounds(569, 533, 155, 75);
 		btnTrailingDistance.setText("Trailing Distance +");
 		
 		Button reduceTrailing = new Button(shlSccPrototypev, SWT.NONE);
@@ -170,7 +180,7 @@ public class Window {
 				updateDisplay();
 			}
 		});
-		reduceTrailing.setBounds(553, 642, 130, 50);
+		reduceTrailing.setBounds(535, 639, 155, 75);
 		reduceTrailing.setText("Trailing Distance -");
 		
 		cruise = new Label(shlSccPrototypev, SWT.NONE);
@@ -205,6 +215,104 @@ public class Window {
 		fdmImg.setLocation(680, 58);
 		fdmImg.setSize(fdm0.width, fdm0.height);
 		fdmImg.setBackgroundImage(new Image(display, fdm0));
+
+		
+		/////////////////////                       TICK MARKS                         ////////////////////////////
+		blackTick = SWTResourceManager.getImage(Window.class, "/resources/black_line.png").getImageData();
+		
+		black_tick = new Label(shlSccPrototypev, SWT.NONE);
+		black_tick.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		black_tick.setLocation(1035, 0);
+		black_tick.setSize(blackTick.width, blackTick.height);
+		black_tick.setImage(new Image(display, blackTick));
+		
+		black_tick1 = new Label(shlSccPrototypev, SWT.NONE);
+		black_tick1.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		black_tick1.setLocation(1035, 225);
+		black_tick1.setSize(blackTick.width, blackTick.height);
+		black_tick1.setImage(new Image(display, blackTick));
+
+		black_tick2 = new Label(shlSccPrototypev, SWT.NONE);
+		black_tick2.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		black_tick2.setLocation(1035, 450);
+		black_tick2.setSize(blackTick.width, blackTick.height);
+		black_tick2.setImage(new Image(display, blackTick));
+		
+		black_tick3 = new Label(shlSccPrototypev, SWT.NONE);
+		black_tick3.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		black_tick3.setLocation(1035, 675);
+		black_tick3.setSize(blackTick.width, blackTick.height);
+		black_tick3.setImage(new Image(display, blackTick));
+		
+		black_tick4 = new Label(shlSccPrototypev, SWT.NONE);
+		black_tick4.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		black_tick4.setLocation(1035, -225);
+		black_tick4.setSize(blackTick.width, blackTick.height);
+		black_tick4.setImage(new Image(display, blackTick));
+		
+		Label myCar = new Label(shlSccPrototypev, SWT.NONE);
+		myCar.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		myCar.setLocation(1094, 673);
+		ImageData redCar =  SWTResourceManager.getImage(Window.class, "/resources/red_car.png").getImageData();
+		myCar.setSize(redCar.width, redCar.height);
+		myCar.setImage(new Image(display, redCar));
+		
+		
+		new Thread(new Runnable() {
+		      public void run() {
+		         while (true) {
+		            try { Thread.sleep(50); } catch (Exception e) { }
+		            Display.getDefault().asyncExec(new Runnable() {
+		               public void run() {
+		                  update();
+		               }
+		            });
+		         }
+		      }
+		   }).start();
+		
+	}
+	
+	private void update()
+	{
+		updateDisplay();
+		int screenLimit = shlSccPrototypev.getSize().y;
+		
+		//blackticks
+		if(black_tick.getLocation().y >= screenLimit)
+		{
+			black_tick.setLocation(black_tick.getLocation().x, -225);
+		}else {
+			black_tick.setLocation(black_tick.getLocation().x, (int) (black_tick.getLocation().y + vehicle.getSpeed()));
+		}
+		
+		if(black_tick1.getLocation().y >= screenLimit)
+		{
+			black_tick1.setLocation(black_tick.getLocation().x, -225);
+		}else {
+			black_tick1.setLocation(black_tick.getLocation().x, (int) (black_tick1.getLocation().y + vehicle.getSpeed()));
+		}
+		
+		if(black_tick2.getLocation().y >= screenLimit)
+		{
+			black_tick2.setLocation(black_tick.getLocation().x, -225);
+		}else {
+			black_tick2.setLocation(black_tick.getLocation().x, (int) (black_tick2.getLocation().y + vehicle.getSpeed()));
+		}
+		
+		if(black_tick3.getLocation().y >= screenLimit)
+		{
+			black_tick3.setLocation(black_tick.getLocation().x, -225);
+		}else {
+			black_tick3.setLocation(black_tick.getLocation().x, (int) (black_tick3.getLocation().y + vehicle.getSpeed()));
+		}
+		
+		if(black_tick4.getLocation().y >= screenLimit)
+		{
+			black_tick4.setLocation(black_tick.getLocation().x, -225);
+		}else {
+			black_tick4.setLocation(black_tick.getLocation().x, (int) (black_tick4.getLocation().y + vehicle.getSpeed()));
+		}
 	}
 	
 	private void updateDisplay()

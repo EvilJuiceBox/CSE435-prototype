@@ -381,6 +381,8 @@ public class Window {
 			System.out.println(cnt);
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
 		} else { //regular car inputs
+
+			alarm.setSize(0,0);
 			if(brakesPressed)
 			{
 				vehicle.decrementSpeed();
@@ -470,7 +472,6 @@ public class Window {
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 		cruise.setText(vehicle.getCruiseInfo());
 		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
-		alarm.setSize(0,0);
 	}
 	
 	private class BlueCar 

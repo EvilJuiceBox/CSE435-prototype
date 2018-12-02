@@ -22,7 +22,7 @@ public class AutomaticEmergencyBrake {
 		}
 	}
 	
-	public static int run(int relativeVelocity, int distance) //returns true if aeb active
+	public static int run(int relativeVelocity, int distance) //returns reactionFrames if aeb active
 	{
 		//EMERGENCY BRAKE, TAKES OVER CONTROL
 		int reactionFrames;

@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Text;
 
 public class Window {
+	private static final int FDM_THRESHOLD = 125;
 	protected Shell shlSccPrototypev;
 	private Label cruise;
 	private Label speedLabel;
@@ -369,19 +370,49 @@ public class Window {
 		
 		int res = AutomaticEmergencyBrake.run(velocityDifference, distanceDifference);
 		
+		System.out.println(vehicle.isCruiseActive());
+		
 		if(res != -1) //5frame time to stop, AEB active
 		{
+			
+			//System.out.println("AEB ON");
+			
 			brakesPressed = false;
 			gasPressed = false;
-
 			alarm.setSize(alarmData.width, alarmData.height);
 			
-			System.out.println("relativeV + " + velocityDifference);
 			int cnt = (int) (res);
-			System.out.println(cnt);
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
+		} else if (vehicle.isCruiseActive()) { //cruise controls
+			System.out.println(vehicle.getFollowingDistance());
+			if(vehicle.isFDMActive()) //fdm active
+			{
+				int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance();
+				int distanceToMin = distanceDifference - minDistanceBetweenVehicles;
+				int reduceFactor;
+				try {
+					reduceFactor = distanceToMin / velocityDifference;
+				} catch (Exception e) {
+					// TODO: handle exception
+					reduceFactor = -1;
+				}
+				if(distanceToMin <= 0 && reduceFactor != -1) //need to decrease speed to match vehicle
+				{
+					vehicle.reduceSpeed(velocityDifference/ Math.max(reduceFactor, 1));
+				}
+			} else if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
+			{
+				if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
+				{
+					vehicle.decrementSpeed();
+				} else if (vehicle.getSpeed() < vehicle.getCruiseSpeed())
+				{
+					vehicle.incrementSpeed();
+				}
+			}
 		} else { //regular car inputs
-
+			//System.out.println("reg input");
+			
 			alarm.setSize(0,0);
 			if(brakesPressed)
 			{
@@ -391,10 +422,7 @@ public class Window {
 				vehicle.incrementSpeed();
 			}
 
-			updateCar();
 		}
-		
-		
 		
 		
 		if(syncSpeedGate)
@@ -451,20 +479,6 @@ public class Window {
 		}else {
 			black_tick4.setLocation(black_tick.getLocation().x, (int) (black_tick4.getLocation().y + vehicle.getSpeed()));
 		}
-	}
-	
-	private void updateCar()
-	{
-		if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
-		{
-			if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
-			{
-				vehicle.decrementSpeed();
-			} else if (vehicle.getSpeed() < vehicle.getCruiseSpeed())
-			{
-				vehicle.incrementSpeed();
-			}
-		} 
 	}
 	
 	private void updateDisplay()

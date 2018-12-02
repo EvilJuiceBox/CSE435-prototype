@@ -31,6 +31,14 @@ public class FollowingDistanceManagement {
 		return this.followingDistance;
 	}
 	
+	protected boolean isActive()
+	{
+		if(this.followingDistance == 0)
+		{
+			return false;
+		}
+		return true;
+	}
 	protected void reset()
 	{
 		followingDistance = 0;

@@ -154,7 +154,12 @@ public class Vehicle {
 		return (followingDistanceManagement.getDistance() == 0) ? "Off" : "" + followingDistanceManagement.getDistance();
 	}
 	
-	protected int getDistance()
+	protected boolean isFDMActive()
+	{
+		return followingDistanceManagement.isActive();
+	}
+	
+	protected int getFollowingDistance()
 	{
 		return followingDistanceManagement.getDistance();
 	}

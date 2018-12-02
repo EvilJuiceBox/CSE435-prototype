@@ -369,10 +369,7 @@ public class Window {
 		distanceDifference += 50;
 
 		int velocityDifference = (int) (vehicle.getSpeed() - bCar.getSpeed()); //relativeVelocity
-		
 		int res = AutomaticEmergencyBrake.run(velocityDifference, distanceDifference);
-		
-		System.out.println(vehicle.isCruiseActive());
 		
 		if(res != -1) //5frame time to stop, AEB active
 		{
@@ -386,21 +383,19 @@ public class Window {
 			int cnt = (int) (res);
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
 		} else if (vehicle.isCruiseActive()) { //cruise controls
-			System.out.println(vehicle.getFollowingDistance());
 			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance();
-			int distanceToMin = distanceDifference - minDistanceBetweenVehicles;
+			int distanceToMin = Math.abs(distanceDifference - minDistanceBetweenVehicles); //limit
 			int reduceFactor;
 			try {
-				reduceFactor = distanceToMin / velocityDifference;
+				reduceFactor = velocityDifference / distanceToMin;
 			} catch (Exception e) {
 				// TODO: handle exception
-				reduceFactor = -1;
+				reduceFactor = 0;
 			}
 			
-			if(vehicle.isFDMActive() && distanceDifference <= minDistanceBetweenVehicles && reduceFactor != -1) //fdm active, reduce distance
+			if(vehicle.isFDMActive() && distanceDifference <= minDistanceBetweenVehicles) //fdm active, reduce distance
 			{
-				System.out.println("in loop");
-				vehicle.reduceSpeed(velocityDifference/ Math.max(reduceFactor, 1));
+				vehicle.reduceSpeed(velocityDifference * Math.max(reduceFactor, 1));
 			} else if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
 			{
 				if(vehicle.getSpeed() > vehicle.getCruiseSpeed())

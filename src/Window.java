@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class Window {
 	private static final int FDM_THRESHOLD = 125;
-	private static final int DECELERATE_THRESHOLD = 50;
+	private static final int DECELERATE_THRESHOLD = 100;
 	protected Shell shlSccPrototypev;
 	private Label cruise;
 	private Label speedLabel;
@@ -382,11 +382,15 @@ public class Window {
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
 		} else if (vehicle.isCruiseActive()) { //cruise controls
 			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance(); //desired spacing between vehicles
-			int stopDistance = DECELERATE_THRESHOLD + minDistanceBetweenVehicles;
+			int stopDistance =  minDistanceBetweenVehicles;
 			
-			
-			if(vehicle.isFDMActive() && distanceDifference - stopDistance <= DECELERATE_THRESHOLD) //fdm active, reduce distance
+			System.out.println(distanceDifference - stopDistance);
+			if(vehicle.isFDMActive() && (distanceDifference - stopDistance) < 0) //fdm active, reduce distance
 			{
+				if(minDistanceBetweenVehicles > distanceDifference) //if the vehicle is already in the limit
+				{
+					vehicle.decrementSpeed();
+				}
 				int timeToImpact;
 				try {
 					timeToImpact = DECELERATE_THRESHOLD/velocityDifference; //time until we get to the next vehicle

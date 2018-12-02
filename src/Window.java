@@ -9,6 +9,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 
 public class Window {
 
@@ -23,15 +27,8 @@ public class Window {
 	private Vehicle vehicle;
 	private Label blueCar;
 	
-	private ImageData fdm0;
-	private ImageData fdm1;
-	private ImageData fdm2;
-	private ImageData fdm3;
-	private ImageData fdm4;
-	
 	private ImageData blackTick;
 	
-	private Label fdmImg;
 	private Label black_tick;
 	private Label black_tick1;
 	private Label black_tick2;
@@ -45,6 +42,11 @@ public class Window {
 	private Text txtEnterBlueCar;
 	private Label distanceBetweenCars;
 	private Button resetBlue;
+	private Button cruiseInc;
+	private Button cruiseDecrement;
+	
+	private boolean gasPressed = false;
+	private boolean brakesPressed = false;
 	
 	/**
 	 * Launch the application.
@@ -64,11 +66,6 @@ public class Window {
 	 */
 	public void open() {
 		vehicle = new Vehicle(2018, "focus");
-		fdm0 =  SWTResourceManager.getImage(Window.class, "/resources/fdm0.png").getImageData();
-		fdm1 =  SWTResourceManager.getImage(Window.class, "/resources/fdm1.png").getImageData();
-		fdm2 =  SWTResourceManager.getImage(Window.class, "/resources/fdm2.png").getImageData();
-		fdm3 =  SWTResourceManager.getImage(Window.class, "/resources/fdm3.png").getImageData();
-		fdm4 =  SWTResourceManager.getImage(Window.class, "/resources/fdm4.png").getImageData();
 		
 		display = Display.getDefault(); //Display
 		createContents();
@@ -111,10 +108,9 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vehicle.cruiseSuspend();
-				updateDisplay();
 			}
 		});
-		cruiseSuspend.setBounds(201, 583, 140, 40);
+		cruiseSuspend.setBounds(200, 627, 140, 40);
 		cruiseSuspend.setText("Cruise Suspend");
 		
 		Button cruiseOff = new Button(shlSccPrototypev, SWT.NONE);
@@ -122,10 +118,9 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vehicle.cruiseDisable();
-				updateDisplay();
 			}
 		});
-		cruiseOff.setBounds(251, 673, 140, 40);
+		cruiseOff.setBounds(261, 689, 140, 40);
 		cruiseOff.setText("Cruise Off");
 		
 		
@@ -143,20 +138,20 @@ public class Window {
 		brakeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				vehicle.decrementSpeed();
-				updateDisplay();
+				//vehicle.decrementSpeed();
+				brakesPressed = !brakesPressed;
+				vehicle.cruiseSuspend();
 			}
 		});
 		brakeButton.setBounds(403, 795, 43, 25);
-		
 		Button gasPedal = new Button(shlSccPrototypev, SWT.NONE);
 		final Image temp = new Image(display, SWTResourceManager.getImage(Window.class, "/resources/gas_pedal.png").getImageData().scaledTo(20, 40));
 		gasPedal.setImage(temp);
 		gasPedal.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				vehicle.incrementSpeed();
-				updateDisplay();
+				//vehicle.incrementSpeed();
+				gasPressed = !gasPressed;
 			}
 		});
 		gasPedal.setBounds(485, 784, 32, 47);
@@ -173,7 +168,6 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vehicle.increaseDistance();
-				updateDisplay();
 			}
 		});
 		btnTrailingDistance.setBounds(569, 533, 155, 75);
@@ -184,7 +178,6 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vehicle.decreaseDistance();
-				updateDisplay();
 			}
 		});
 		reduceTrailing.setBounds(535, 639, 155, 75);
@@ -209,7 +202,6 @@ public class Window {
 			public void widgetSelected(SelectionEvent e)
 			{
 				vehicle.setSpeed(25);
-				updateDisplay();
 			}
 		});
 		setSpeed25.setText("SetSpeedTo25");
@@ -309,6 +301,26 @@ public class Window {
 		});
 		resetBlue.setText("Reset Blue");
 		
+		cruiseInc = new Button(shlSccPrototypev, SWT.NONE);
+		cruiseInc.setBounds(161, 562, 84, 46);
+		cruiseInc.setText("Cruise +");
+		cruiseInc.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				vehicle.cruiseIncrement();
+			}
+		});
+		
+		cruiseDecrement = new Button(shlSccPrototypev, SWT.NONE);
+		cruiseDecrement.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				vehicle.cruiseDecrement();
+			}
+		});
+		cruiseDecrement.setBounds(261, 562, 84, 46);
+		cruiseDecrement.setText("Cruise -");
+		
 		bCar = new BlueCar(blueCar.getLocation().y);
 		
 		new Thread(new Runnable() {
@@ -329,6 +341,18 @@ public class Window {
 	private void update()
 	{
 		updateDisplay();
+		
+		if(brakesPressed)
+		{
+			vehicle.decrementSpeed();
+			gasPressed = false;
+		} else if(gasPressed)
+		{
+			vehicle.incrementSpeed();
+		}
+		
+		updateCar();
+		
 		
 		blueCarSpeed.setText("Blue speed: " + (int) bCar.getSpeed());
 		bCar.update(vehicle.getSpeed());
@@ -374,32 +398,25 @@ public class Window {
 		}
 	}
 	
+	private void updateCar()
+	{
+		if(vehicle.isCruiseActive()) //cruiseactive
+		{
+			if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
+			{
+				vehicle.decrementSpeed();
+			} else if (vehicle.getSpeed() < vehicle.getCruiseSpeed())
+			{
+				vehicle.incrementSpeed();
+			}
+		} 
+	}
+	
 	private void updateDisplay()
 	{
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 		cruise.setText(vehicle.getCruiseInfo());
 		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
-		
-//		switch(vehicle.getDistance())
-//		{
-//		case 0 : 
-//			fdmImg.setBackgroundImage(new Image(display, fdm0));
-//			break;
-//		case 1 : 
-//			fdmImg.setBackgroundImage(new Image(display, fdm1));
-//			break;
-//		case 2 : 
-//			fdmImg.setBackgroundImage(new Image(display, fdm2));
-//			break;
-//		case 3 : 
-//			fdmImg.setBackgroundImage(new Image(display, fdm3));
-//			break;
-//		case 4 : 
-//			fdmImg.setBackgroundImage(new Image(display, fdm4));
-//			break;
-//		default:
-//			fdmImg.setBackgroundImage(new Image(display, fdm0));
-//		}
 	}
 	
 	private class BlueCar 

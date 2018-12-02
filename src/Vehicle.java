@@ -1,5 +1,9 @@
 
 public class Vehicle {
+	private static final double MAX = 150;
+	private static final double MIN = 0;
+	private static final double CRUISE_MIN = 25;
+	
 	private int year;
 	private String model;
 	
@@ -18,13 +22,13 @@ public class Vehicle {
 		this.year = y;
 		this.model = m;
 		
-		speedometer = new Speedometer();
+		speedometer = new Speedometer(MAX, MIN);
 		accelerator = new Accelerator(speedometer);
 		brake = new Brake(speedometer);
 		dashboard = new Dashboard();
 		
 		
-		simpleCruise = new SimpleCruise();
+		simpleCruise = new SimpleCruise(MAX, CRUISE_MIN);
 		followingDistanceManagement = new FollowingDistanceManagement();
 		aeb = new AutomaticEmergencyBrake();
 	}
@@ -92,6 +96,11 @@ public class Vehicle {
 	{
 		simpleCruise.cruiseResume();
 	}
+	
+	protected double getCruiseSpeed()
+	{
+		return simpleCruise.getCruiseSpeed();
+	}
 
 	protected String getCruiseInfo()
 	{
@@ -104,6 +113,16 @@ public class Vehicle {
 		}
 		
 		return "Cruise Off";
+	}
+	
+	protected void cruiseIncrement()
+	{
+		simpleCruise.increment();
+	}
+	
+	protected void cruiseDecrement()
+	{
+		simpleCruise.decrement();
 	}
 	
 	protected boolean isCruiseActive()

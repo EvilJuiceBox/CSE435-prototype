@@ -3,13 +3,15 @@
  * for prototype, speedometer controls the speed of the vehicle as well
  */
 public class Speedometer extends SensorComponent{
-	private static final double MAX = 150;
-	private static final double MIN = 0;
-	
+
+	private final double MAX;
+	private final double MIN;
 	private double speed;
 	
-	protected Speedometer() {
+	protected Speedometer(double max, double min) {
 		speed = 0;
+		this.MAX = max;
+		this.MIN = min;
 	}
 	
 	/*

@@ -3,15 +3,35 @@ public class SimpleCruise extends Module {
 	private double speed; //the speed of the vehicle to maintain
 	private String status; //false = off, true = on
 	
-	protected SimpleCruise()
+	private final double MAX;
+	private final double MIN;
+	protected SimpleCruise(double max, double min)
 	{
 		speed = 0;
+		this.MAX = max;
+		this.MIN = min;
 	}
 
 	protected void setSpeed(int input)
 	{
 		this.speed = input;
 		this.status = "Disabled";
+	}
+	
+	protected void increment()
+	{
+		if(speed < MAX)
+		{
+			speed++;
+		}
+	}
+	
+	protected void decrement()
+	{
+		if(speed > MIN)
+		{
+			speed--;
+		}
 	}
 	
 	protected double getCruiseSpeed()

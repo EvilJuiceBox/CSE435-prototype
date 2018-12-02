@@ -54,6 +54,11 @@ public class Vehicle {
 		speedometer.decrement();
 	}
 	
+	protected void reduceSpeed(int input)
+	{
+		speedometer.reduce(input);
+	}
+	
 	public double getSpeed()
 	{
 		return speedometer.getSpeed();
@@ -111,7 +116,6 @@ public class Vehicle {
 		{
 			return "Cruise Suspended: " + (int) simpleCruise.getCruiseSpeed();
 		}
-		
 		return "Cruise Off";
 	}
 	

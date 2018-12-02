@@ -37,6 +37,15 @@ public class Speedometer extends SensorComponent{
 		}
 	}
 	
+	protected void reduce(int input)
+	{
+		speed -= input;
+		if(speed < 0)
+		{
+			speed = 0;
+		}
+	}
+	
 	protected double getSpeed()
 	{
 		return this.speed;

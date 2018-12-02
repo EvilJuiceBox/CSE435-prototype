@@ -9,16 +9,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 
 public class Window {
-
 	protected Shell shlSccPrototypev;
 	private Label cruise;
-	private int speed;
 	private Label speedLabel;
 	private Display display;
 	
@@ -28,6 +22,7 @@ public class Window {
 	private Label blueCar;
 	
 	private ImageData blackTick;
+	private ImageData alarmData;
 	
 	private Label black_tick;
 	private Label black_tick1;
@@ -50,6 +45,7 @@ public class Window {
 	private Button syncSpeed;
 	
 	private boolean syncSpeedGate = true;
+	private Label alarm;
 	
 	/**
 	 * Launch the application.
@@ -338,6 +334,13 @@ public class Window {
 		syncSpeed.setBounds(751, 171, 119, 25);
 		syncSpeed.setText("Sync Speed: On");
 		
+		alarm = new Label(shlSccPrototypev, SWT.NONE);
+		alarm.setBounds(373, 435, 47, 66);
+		alarm.setText("AEB");
+		alarmData =  SWTResourceManager.getImage(Window.class, "/resources/alarm.png").getImageData();
+		alarm.setSize(alarmData.width, alarmData.height);
+		alarm.setImage(new Image(display, alarmData));
+		
 		bCar = new BlueCar(blueCar.getLocation().y);
 		
 		new Thread(new Runnable() {
@@ -359,15 +362,37 @@ public class Window {
 	{
 		updateDisplay();
 		
-		if(brakesPressed)
+		int distanceDifference = ((bCar.getLocation() - myCar.getLocation().y) + 130) *-1; //70 //DISTANCE
+		distanceDifference += 50;
+
+		int velocityDifference = (int) (vehicle.getSpeed() - bCar.getSpeed()); //relativeVelocity
+		
+		int res = AutomaticEmergencyBrake.run(velocityDifference, distanceDifference);
+		
+		if(res != -1) //5frame time to stop, AEB active
 		{
-			vehicle.decrementSpeed();
-		} else if(gasPressed)
-		{
-			vehicle.incrementSpeed();
+			brakesPressed = false;
+			gasPressed = false;
+
+			alarm.setSize(alarmData.width, alarmData.height);
+			
+			System.out.println("relativeV + " + velocityDifference);
+			int cnt = (int) (res);
+			System.out.println(cnt);
+			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
+		} else { //regular car inputs
+			if(brakesPressed)
+			{
+				vehicle.decrementSpeed();
+			}else if(gasPressed)
+			{
+				vehicle.incrementSpeed();
+			}
+
+			updateCar();
 		}
 		
-		updateCar();
+		
 		
 		
 		if(syncSpeedGate)
@@ -380,7 +405,7 @@ public class Window {
 		bCar.update(vehicle.getSpeed());
 		blueCar.setLocation(blueCar.getLocation().x, bCar.getLocation());
 		
-		distanceBetweenCars.setText("Distance: " + ((bCar.getLocation() - myCar.getLocation().y) + 70) *-1);
+		distanceBetweenCars.setText("Distance: " + distanceDifference);
 		int screenLimit = shlSccPrototypev.getSize().y;
 		
 		//blackticks
@@ -445,6 +470,7 @@ public class Window {
 		speedLabel.setText("Speed: " + (int) vehicle.getSpeed());
 		cruise.setText(vehicle.getCruiseInfo());
 		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
+		alarm.setSize(0,0);
 	}
 	
 	private class BlueCar 

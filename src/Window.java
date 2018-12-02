@@ -140,6 +140,7 @@ public class Window {
 			public void widgetSelected(SelectionEvent e) {
 				//vehicle.decrementSpeed();
 				brakesPressed = !brakesPressed;
+				gasPressed = false;
 				vehicle.cruiseSuspend();
 			}
 		});
@@ -152,6 +153,7 @@ public class Window {
 			public void widgetSelected(SelectionEvent e) {
 				//vehicle.incrementSpeed();
 				gasPressed = !gasPressed;
+				brakesPressed = false;
 			}
 		});
 		gasPedal.setBounds(485, 784, 32, 47);
@@ -345,7 +347,6 @@ public class Window {
 		if(brakesPressed)
 		{
 			vehicle.decrementSpeed();
-			gasPressed = false;
 		} else if(gasPressed)
 		{
 			vehicle.incrementSpeed();
@@ -364,7 +365,13 @@ public class Window {
 		//blackticks
 		if(black_tick.getLocation().y >= screenLimit)
 		{
+			//black_tick.setLocation(black_tick.getLocation().x, -225);
+			//reset all tick locations
 			black_tick.setLocation(black_tick.getLocation().x, -225);
+			black_tick1.setLocation(black_tick.getLocation().x, 0);
+			black_tick2.setLocation(black_tick.getLocation().x, 225);
+			black_tick3.setLocation(black_tick.getLocation().x, 450);
+			black_tick4.setLocation(black_tick.getLocation().x, 675);
 		}else {
 			black_tick.setLocation(black_tick.getLocation().x, (int) (black_tick.getLocation().y + vehicle.getSpeed()));
 		}
@@ -400,7 +407,7 @@ public class Window {
 	
 	private void updateCar()
 	{
-		if(vehicle.isCruiseActive()) //cruiseactive
+		if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
 		{
 			if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
 			{

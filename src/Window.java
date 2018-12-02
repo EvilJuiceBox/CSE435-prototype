@@ -205,6 +205,8 @@ public class Window {
 			public void widgetSelected(SelectionEvent e)
 			{
 				vehicle.setSpeed(25);
+				gasPressed = false;
+				brakesPressed = false;
 			}
 		});
 		setSpeed25.setText("SetSpeedTo25");
@@ -385,21 +387,20 @@ public class Window {
 			vehicle.reduceSpeed((int) Math.ceil(velocityDifference / Math.max(res, 1))); //relativeSpeed reduced by coefficient of distance
 		} else if (vehicle.isCruiseActive()) { //cruise controls
 			System.out.println(vehicle.getFollowingDistance());
-			if(vehicle.isFDMActive()) //fdm active
+			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance();
+			int distanceToMin = distanceDifference - minDistanceBetweenVehicles;
+			int reduceFactor;
+			try {
+				reduceFactor = distanceToMin / velocityDifference;
+			} catch (Exception e) {
+				// TODO: handle exception
+				reduceFactor = -1;
+			}
+			
+			if(vehicle.isFDMActive() && distanceDifference <= minDistanceBetweenVehicles && reduceFactor != -1) //fdm active, reduce distance
 			{
-				int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance();
-				int distanceToMin = distanceDifference - minDistanceBetweenVehicles;
-				int reduceFactor;
-				try {
-					reduceFactor = distanceToMin / velocityDifference;
-				} catch (Exception e) {
-					// TODO: handle exception
-					reduceFactor = -1;
-				}
-				if(distanceToMin <= 0 && reduceFactor != -1) //need to decrease speed to match vehicle
-				{
-					vehicle.reduceSpeed(velocityDifference/ Math.max(reduceFactor, 1));
-				}
+				System.out.println("in loop");
+				vehicle.reduceSpeed(velocityDifference/ Math.max(reduceFactor, 1));
 			} else if(vehicle.isCruiseActive() && gasPressed == false) //cruiseactive
 			{
 				if(vehicle.getSpeed() > vehicle.getCruiseSpeed())
@@ -409,6 +410,9 @@ public class Window {
 				{
 					vehicle.incrementSpeed();
 				}
+			} else if(vehicle.isCruiseActive() && gasPressed == true)
+			{
+				vehicle.incrementSpeed();
 			}
 		} else { //regular car inputs
 			//System.out.println("reg input");

@@ -47,6 +47,9 @@ public class Window {
 	
 	private boolean gasPressed = false;
 	private boolean brakesPressed = false;
+	private Button syncSpeed;
+	
+	private boolean syncSpeedGate = true;
 	
 	/**
 	 * Launch the application.
@@ -97,7 +100,8 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vehicle.cruiseActive();
-				updateDisplay();
+				gasPressed = false;
+				brakesPressed = false;
 			}
 		});
 		cruiseActive.setBounds(180, 491, 140, 40);
@@ -272,6 +276,7 @@ public class Window {
 					if(tempInput >= 0 && tempInput <= 150)
 					{
 						bCar.setSpeed(tempInput);
+						syncSpeedGate = false;
 					}
 				} catch (Exception exception) {
 					exception.printStackTrace();
@@ -296,7 +301,7 @@ public class Window {
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
-				bCar.setSpeed(vehicle.getSpeed());
+				syncSpeedGate = true;
 				bCar.resetLocation();
 				
 			}
@@ -322,6 +327,16 @@ public class Window {
 		});
 		cruiseDecrement.setBounds(261, 562, 84, 46);
 		cruiseDecrement.setText("Cruise -");
+		
+		syncSpeed = new Button(shlSccPrototypev, SWT.NONE);
+		syncSpeed.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				syncSpeedGate = !syncSpeedGate;
+			}
+		});
+		syncSpeed.setBounds(751, 171, 119, 25);
+		syncSpeed.setText("Sync Speed: On");
 		
 		bCar = new BlueCar(blueCar.getLocation().y);
 		
@@ -355,6 +370,12 @@ public class Window {
 		updateCar();
 		
 		
+		if(syncSpeedGate)
+		{
+			bCar.speed = vehicle.getSpeed();
+		}
+		String result = (syncSpeedGate) ? "Sync Speed: On": "Sync Speed: Off";
+		syncSpeed.setText(result);
 		blueCarSpeed.setText("Blue speed: " + (int) bCar.getSpeed());
 		bCar.update(vehicle.getSpeed());
 		blueCar.setLocation(blueCar.getLocation().x, bCar.getLocation());

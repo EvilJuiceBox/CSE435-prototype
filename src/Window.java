@@ -385,7 +385,6 @@ public class Window {
 			int minDistanceBetweenVehicles =  FDM_THRESHOLD*vehicle.getFollowingDistance(); //desired spacing between vehicles
 			int stopDistance =  minDistanceBetweenVehicles;
 			
-			System.out.println(distanceDifference - stopDistance);
 			if(vehicle.isFDMActive() && (distanceDifference - stopDistance) < 0) //fdm active, reduce distance
 			{
 				if(minDistanceBetweenVehicles > distanceDifference) //if the vehicle is already in the limit
@@ -414,7 +413,6 @@ public class Window {
 				vehicle.incrementSpeed();
 			}
 		} else { //regular car inputs
-			//System.out.println("reg input");
 			alarm.setSize(0,0);
 			if(brakesPressed)
 			{

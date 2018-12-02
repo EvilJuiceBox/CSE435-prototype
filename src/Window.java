@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Text;
 
 public class Window {
 
@@ -24,6 +25,7 @@ public class Window {
 	private Label trailingDistanceDisplay;
 
 	private Vehicle vehicle;
+	private Label blueCar;
 	
 	private ImageData fdm0;
 	private ImageData fdm1;
@@ -39,6 +41,12 @@ public class Window {
 	private Label black_tick2;
 	private Label black_tick3;
 	private Label black_tick4;
+	
+	private BlueCar bCar;
+	private Label myCar;
+	
+	private Text txtEnterBlueCar;
+	private Label distanceBetweenCars;
 	
 	/**
 	 * Launch the application.
@@ -82,6 +90,7 @@ public class Window {
 	 */
 	protected void createContents() {
 		shlSccPrototypev = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN );
+		shlSccPrototypev.setToolTipText("Blue speed");
 		shlSccPrototypev.setText("SCC2 PrototypeV2");
 		
 		ImageData backgroundImgData = SWTResourceManager.getImage(Window.class, "/resources/background.png").getImageData();
@@ -211,12 +220,6 @@ public class Window {
 		lblScc.setBounds(10, 10, 119, 99);
 		lblScc.setText("SCC2 \nKira Chan \nIan Murray \nPrudhvi Kuchipudi \nBrandon Brooks \nZebin Liang");
 		
-		fdmImg = new Label(shlSccPrototypev, SWT.NONE);
-		fdmImg.setLocation(680, 58);
-		fdmImg.setSize(fdm0.width, fdm0.height);
-		fdmImg.setBackgroundImage(new Image(display, fdm0));
-
-		
 		/////////////////////                       TICK MARKS                         ////////////////////////////
 		blackTick = SWTResourceManager.getImage(Window.class, "/resources/black_line.png").getImageData();
 		
@@ -250,13 +253,47 @@ public class Window {
 		black_tick4.setSize(blackTick.width, blackTick.height);
 		black_tick4.setImage(new Image(display, blackTick));
 		
-		Label myCar = new Label(shlSccPrototypev, SWT.NONE);
+		myCar = new Label(shlSccPrototypev, SWT.NONE);
 		myCar.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
 		myCar.setLocation(1094, 673);
 		ImageData redCar =  SWTResourceManager.getImage(Window.class, "/resources/red_car.png").getImageData();
 		myCar.setSize(redCar.width, redCar.height);
 		myCar.setImage(new Image(display, redCar));
 		
+		blueCar = new Label(shlSccPrototypev, SWT.NONE);
+		blueCar.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		blueCar.setLocation(1094, 100);
+		ImageData blueCarData =  SWTResourceManager.getImage(Window.class, "/resources/blue_car.png").getImageData();
+		blueCar.setSize(blueCarData.width, blueCarData.height);
+		blueCar.setImage(new Image(display, blueCarData));
+		
+		Label lblBlueCarSpeed = new Label(shlSccPrototypev, SWT.NONE);
+		lblBlueCarSpeed.setBounds(751, 22, 140, 25);
+		lblBlueCarSpeed.setText("Blue car speed:");
+		
+		Button setBlueSpeedButton = new Button(shlSccPrototypev, SWT.NONE);
+		setBlueSpeedButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int tempInput = Integer.parseInt(txtEnterBlueCar.getText());
+				if(tempInput >= 0 && tempInput <= 150)
+				{
+					bCar.setSpeed(tempInput);
+				}
+			}
+		});
+		setBlueSpeedButton.setBounds(844, 51, 47, 25);
+		setBlueSpeedButton.setText("Set");
+		
+		txtEnterBlueCar = new Text(shlSccPrototypev, SWT.BORDER);
+		txtEnterBlueCar.setToolTipText("Blue speed");
+		txtEnterBlueCar.setBounds(751, 53, 76, 21);
+		
+		distanceBetweenCars = new Label(shlSccPrototypev, SWT.NONE);
+		distanceBetweenCars.setBounds(751, 123, 119, 25);
+		distanceBetweenCars.setText("Distance:");
+		
+		bCar = new BlueCar(blueCar.getLocation().y);
 		
 		new Thread(new Runnable() {
 		      public void run() {
@@ -276,6 +313,11 @@ public class Window {
 	private void update()
 	{
 		updateDisplay();
+		
+		bCar.update(vehicle.getSpeed());
+		blueCar.setLocation(blueCar.getLocation().x, bCar.getLocation());
+		
+		distanceBetweenCars.setText("Distance: " + ((bCar.getLocation() - myCar.getLocation().y) + 70) *-1);
 		int screenLimit = shlSccPrototypev.getSize().y;
 		
 		//blackticks
@@ -321,25 +363,54 @@ public class Window {
 		cruise.setText(vehicle.getCruiseInfo());
 		trailingDistanceDisplay.setText(vehicle.getDistanceInfo());
 		
-		switch(vehicle.getDistance())
+//		switch(vehicle.getDistance())
+//		{
+//		case 0 : 
+//			fdmImg.setBackgroundImage(new Image(display, fdm0));
+//			break;
+//		case 1 : 
+//			fdmImg.setBackgroundImage(new Image(display, fdm1));
+//			break;
+//		case 2 : 
+//			fdmImg.setBackgroundImage(new Image(display, fdm2));
+//			break;
+//		case 3 : 
+//			fdmImg.setBackgroundImage(new Image(display, fdm3));
+//			break;
+//		case 4 : 
+//			fdmImg.setBackgroundImage(new Image(display, fdm4));
+//			break;
+//		default:
+//			fdmImg.setBackgroundImage(new Image(display, fdm0));
+//		}
+	}
+	
+	private class BlueCar 
+	{
+		private double speed;
+		private int location;
+		
+		protected BlueCar(int myLocation)
 		{
-		case 0 : 
-			fdmImg.setBackgroundImage(new Image(display, fdm0));
-			break;
-		case 1 : 
-			fdmImg.setBackgroundImage(new Image(display, fdm1));
-			break;
-		case 2 : 
-			fdmImg.setBackgroundImage(new Image(display, fdm2));
-			break;
-		case 3 : 
-			fdmImg.setBackgroundImage(new Image(display, fdm3));
-			break;
-		case 4 : 
-			fdmImg.setBackgroundImage(new Image(display, fdm4));
-			break;
-		default:
-			fdmImg.setBackgroundImage(new Image(display, fdm0));
+			this.speed = 0;
+			this.location = myLocation;
+		}
+		
+		protected int getLocation()
+		{
+			System.out.println(this.location);
+			return this.location;
+		}
+		
+		protected void setSpeed(int input)
+		{
+			this.speed = input;
+		}
+		
+		protected void update(double relativeSpeed)
+		{
+			//speed to move:mySpeed - relativeSpeed
+			this.location += -(speed - relativeSpeed);
 		}
 	}
 }
